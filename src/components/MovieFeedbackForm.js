@@ -1,4 +1,5 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import React from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 const MovieFeedbackForm = () => {
@@ -7,7 +8,6 @@ const MovieFeedbackForm = () => {
     MovieName: "",
     ratings: "",
     comments: "",
-    
   };
 
   const validationSchema = Yup.object({
@@ -15,19 +15,28 @@ const MovieFeedbackForm = () => {
       .min(3, "Name must be at least 3 characters")
       .required("Full name is required"),
 
-    MovieName: Yup.string()
-      .required("MovieName is required"),
+    MovieName: Yup.string().required("MovieName is required"),
 
     ratings: Yup.number()
       .min(1, "Minimum rating is 1")
       .max(5, "Maximum rating is 5")
       .required("Rating is required"),
 
-    comments: Yup.string()
-      .max(50, "comments should be under 50 characters")
+    comments: Yup.string().max(50, "comments should be under 50 characters"),
   });
+
   const handleSubmit = (values, { resetForm }) => {
-    console.log("Form submitted: ", values);
+    const existingReviews = JSON.parse(localStorage.getItem("reviews")) || [];
+
+    const newReview = {
+      name: values.Name,
+      movie: values.MovieName,
+      rating: values.ratings,
+      comments: values.comments,
+    };
+
+    localStorage.setItem("reviews", JSON.stringify([...existingReviews, newReview]));
+
     alert("Form submitted successfully");
     resetForm();
   };
@@ -50,7 +59,7 @@ const MovieFeedbackForm = () => {
 
           <div>
             <label>MovieName:</label>
-            <Field type="MovieName" name="MovieName" />
+            <Field type="text" name="MovieName" />
             <ErrorMessage name="MovieName" component="div" className="error" />
           </div>
 
@@ -74,4 +83,3 @@ const MovieFeedbackForm = () => {
 };
 
 export default MovieFeedbackForm;
-
